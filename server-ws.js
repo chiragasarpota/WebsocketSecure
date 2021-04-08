@@ -60,11 +60,15 @@ wss.on("connection", (client) => {
     if (parsedMsg.type === "username") {
       clients.saveClient(parsedMsg.data, client);
     } else if (parsedMsg.type === "message") {
-      ws_send(
-        "message",
-        parsedMsg.data,
-        clients.clientsList[parsedMsg.to_user]
-      );
+      if (parsedMsg.to_user in clients.clientsList) {
+        ws_send(
+          "message",
+          parsedMsg.data,
+          clients.clientsList[parsedMsg.to_user]
+        );
+      } else {
+        ws_send("message", "Client is not online", client);
+      }
     } else if (parsedMsg.type === "echo") {
       ws_send("echo", parsedMsg.data, client);
     }
